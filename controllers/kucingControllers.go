@@ -1,11 +1,10 @@
 package controllers
 
 import (
+	"Web-Golang/models"
 	"encoding/json"
 	"log"
 	"net/http"
-
-	"Web-Golang/models"
 
 	"github.com/labstack/echo"
 )
@@ -52,5 +51,4 @@ func PostKucing(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"status": "berhasil",
 	})
-
 }

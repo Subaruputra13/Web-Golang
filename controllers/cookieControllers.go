@@ -6,9 +6,9 @@ import (
 	"github.com/labstack/echo"
 )
 
-func GetDashboard(c echo.Context) error {
+func GetCookie(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
-		"status": "berhasil",
-		"page":   "dashboard",
+		"message": "Cookie Berhasil",
+		"page":    "Cookie",
 	})
 }
