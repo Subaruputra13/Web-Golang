@@ -13,7 +13,11 @@ func CheckCooki(next echo.HandlerFunc) echo.HandlerFunc {
 			return err
 		}
 
-		if cookie.Value == "admin" {
+		token, err := c.Cookie("JwtCookie")
+		if err != nil {
+			return err
+		}
+		if cookie.Value == "admin" && token.Name == "JwtCookie" {
 			return next(c)
 		}
 

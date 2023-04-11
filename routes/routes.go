@@ -15,19 +15,17 @@ func New() *echo.Echo {
 
 	// Middlewares
 	m.LogMiddlewares(e)
-	e.Use(mid.Static("views"))
-
-	// Routes
 	e.Use(mid.StaticWithConfig(mid.StaticConfig{
-		Root:  "view",
+		Root:  "views",
 		Index: "about.html",
 	}))
-	e.Use(mid.JWTWithConfig(mid.JWTConfig{
+
+	// Routes
+	e.GET("/home", controllers.GetHome, mid.JWTWithConfig(mid.JWTConfig{
 		SigningMethod: "HS256",
 		SigningKey:    []byte(constants.SCREAT_JWT),
 		TokenLookup:   "cookie:JwtCookie",
 	}))
-	e.GET("/home", controllers.GetHome)
 
 	l := e.Group("/login")
 	l.GET("", controllers.Login)
@@ -47,7 +45,6 @@ func New() *echo.Echo {
 	co := e.Group("/cookie")
 	co.Use(m.CheckCooki)
 	co.GET("/main", controllers.GetCookie)
-	return e
 
-	// JWT
+	return e
 }
