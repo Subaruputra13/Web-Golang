@@ -15,12 +15,26 @@ func New() *echo.Echo {
 
 	// Middlewares
 	m.LogMiddlewares(e)
+	e.Use(mid.Static("views"))
 
 	// Routes
-	e.GET("/home", controllers.GetHome, mid.JWT([]byte(constants.SCREAT_JWT)))
-	e.GET("/login", controllers.Login)
-	e.GET("/kucing/:type", controllers.GetKucing)
-	e.POST("/kucing", controllers.PostKucing)
+	e.Use(mid.StaticWithConfig(mid.StaticConfig{
+		Root:  "view",
+		Index: "about.html",
+	}))
+	e.Use(mid.JWTWithConfig(mid.JWTConfig{
+		SigningMethod: "HS256",
+		SigningKey:    []byte(constants.SCREAT_JWT),
+		TokenLookup:   "cookie:JwtCookie",
+	}))
+	e.GET("/home", controllers.GetHome)
+
+	l := e.Group("/login")
+	l.GET("", controllers.Login)
+
+	k := e.Group("/kucing")
+	k.GET("/:type", controllers.GetKucing)
+	k.POST("", controllers.PostKucing)
 
 	// Grouping Routes
 	d := e.Group("/api")

@@ -47,8 +47,9 @@ func PostKucing(c echo.Context) error {
 		})
 	}
 
-	log.Printf("Berhasil mendapatkan Kucing: %v\n", kucing)
-	return c.JSON(http.StatusOK, map[string]string{
+	return c.JSON(http.StatusOK, map[string]interface{}{
 		"status": "berhasil",
+		"nama":   kucing.Nama,
+		"type":   kucing.Type,
 	})
 }
