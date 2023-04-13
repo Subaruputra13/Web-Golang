@@ -15,6 +15,7 @@ func New() *echo.Echo {
 
 	// Middlewares
 	m.LogMiddlewares(e)
+	e.Use(m.ServerHeader)
 	e.Use(mid.StaticWithConfig(mid.StaticConfig{
 		Root:  "views",
 		Index: "about.html",
@@ -31,6 +32,7 @@ func New() *echo.Echo {
 	l.GET("", controllers.Login)
 
 	k := e.Group("/kucing")
+	k.GET("", controllers.GetKucing)
 	k.GET("/:type", controllers.GetKucing)
 	k.POST("", controllers.PostKucing)
 

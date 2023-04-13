@@ -1,47 +1,39 @@
 package controllers
 
 import (
+	"Web-Golang/config"
 	"Web-Golang/models"
-	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/labstack/echo"
 )
 
 func GetKucing(c echo.Context) error {
-	// Query Parameter
-	kucing := c.QueryParam("kucing")
-	status := c.QueryParam("status")
+	kucings := []models.Kucing{}
 
-	datatype := c.Param("type")
+	err := config.DB.Find(&kucings).Error
 
-	if datatype == "string" {
-		return c.String(http.StatusOK, "Kucing:"+kucing+", status:"+status)
-	}
-
-	if datatype == "json" {
-		return c.JSON(http.StatusOK, map[string]string{
-			"kucing": kucing,
-			"status": status,
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "gagal mendapatkan data",
 		})
 	}
 
-	return c.JSON(http.StatusBadRequest, map[string]string{
-		"error": "Tipe harus string dan json !",
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Mendapatkan data",
+		"data":    kucings,
 	})
+
 }
 
 func PostKucing(c echo.Context) error {
-	kucing := models.Kucing{}
+	kucings := models.Kucing{}
 
-	defer c.Request().Body.Close()
+	c.Bind(&kucings)
 
-	err := json.NewDecoder(c.Request().Body).Decode(&kucing)
+	err := config.DB.Create(&kucings).Error
 
 	if err != nil {
-		log.Printf("Gagal melakukan decode %s", err)
-
 		return c.JSON(http.StatusBadRequest, map[string]string{
 			"error": "Gagal melakukan decode",
 		})
@@ -49,7 +41,6 @@ func PostKucing(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"status": "berhasil",
-		"nama":   kucing.Nama,
-		"type":   kucing.Type,
+		"data":   kucings,
 	})
 }
